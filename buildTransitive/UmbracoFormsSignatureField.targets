@@ -1,0 +1,31 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UmbracoFormsSignatureFieldContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\UmbracoFormsSignatureField\**\*.*</UmbracoFormsSignatureFieldContentFilesPath>
+    <UmbracoFormsSignatureFieldViewFilesPath>$(MSBuildThisFileDirectory)..\Views\**\*.*</UmbracoFormsSignatureFieldViewFilesPath>
+  </PropertyGroup>
+
+  <Target Name="CopyUmbracoFormsSignatureFieldAssets" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <UmbracoFormsSignatureFieldContentFiles Include="$(UmbracoFormsSignatureFieldContentFilesPath)" />
+    </ItemGroup>
+    <Message Text="Copying UmbracoFormsSignatureField files: $(UmbracoFormsSignatureFieldContentFilesPath) - #@(UmbracoFormsSignatureFieldContentFiles->Count()) files" Importance="high" />
+    <Copy SourceFiles="@(UmbracoFormsSignatureFieldContentFiles)" DestinationFiles="@(UmbracoFormsSignatureFieldContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\UmbracoFormsSignatureField\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyUmbracoFormsSignatureFieldViewAssets" BeforeTargets="Build">
+    <ItemGroup>
+      <UmbracoFormsSignatureFieldViewFiles Include="$(UmbracoFormsSignatureFieldViewFilesPath)" />
+    </ItemGroup>
+    <Message Text="Copying Umbraco Forms Signature Field view files: $(UmbracoFormsSignatureFieldViewFilesPath) - #@(UmbracoFormsRepeatingFieldsViewFiles->Count()) files" Importance="high" />
+    <Copy SourceFiles="@(UmbracoFormsSignatureFieldViewFiles)" DestinationFiles="@(UmbracoFormsSignatureFieldViewFiles->'$(MSBuildProjectDirectory)\Views\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true"
+          Condition="%(Filename)!='' AND (!Exists('$(MSBuildProjectDirectory)\Views\%(RecursiveDir)%(Filename)%(Extension)') OR $([System.DateTime]::Parse('%(ModifiedTime)').Ticks) &gt; $([System.IO.File]::GetLastWriteTime('$(MSBuildProjectDirectory)\Views\%(RecursiveDir)%(Filename)%(Extension)').Ticks))"/>
+  </Target>
+
+  <Target Name="ClearUmbracoFormsSignatureFieldAssets" BeforeTargets="Clean">
+    <ItemGroup>
+      <UmbracoFormsSignatureFieldDir Include="$(MSBuildProjectDirectory)\App_Plugins\UmbracoFormsSignatureField\" />
+    </ItemGroup>
+    <Message Text="Clear old UmbracoFormsSignatureField data" Importance="high" />
+    <RemoveDir Directories="@(UmbracoFormsSignatureFieldDir)" />
+  </Target>
+</Project>

@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ContentTargetFolders>.</ContentTargetFolders>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>UmbracoFormsSignatureField</PackageId>
+    <Product>UmbracoFormsSignatureField</Product>
+    <Title>UmbracoFormsSignatureField</Title>
+    <Description>...</Description>
+    <PackageTags>umbraco plugin package</PackageTags>
+    <AssemblyName>integrious.umbraco.forms.signaturefield</AssemblyName>
+    <RootNamespace>Integrious.Umbraco.Forms.SignatureField</RootNamespace>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.1" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.1" />
+    <PackageReference Include="Umbraco.Forms.Core" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="buildTransitive\**" Pack="true" PackagePath="buildTransitive" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="App_Plugins\UmbracoFormsSignatureField\**" />
+    <EmbeddedResource Remove="App_Plugins\UmbracoFormsSignatureField\**" />
+    <None Remove="App_Plugins\UmbracoFormsSignatureField\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="App_Plugins_Src\UmbracoFormsSignatureField\FrontEnd\Js\init.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="App_Plugins_Src\UmbracoFormsSignatureField\FrontEnd\Js\init.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="App_Plugins\" />
+    <Folder Include="App_Plugins_Src\UmbracoFormsSignatureField\BackOffice\" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="yarn run webpack" />
+  </Target>
+</Project>

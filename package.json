@@ -1,0 +1,9 @@
+{
+  "name": "UmbracoFormsSignatureField",
+  "packageManager": "yarn@4.0.2",
+  "dependencies": {
+    "signature_pad": "^4.1.7",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
