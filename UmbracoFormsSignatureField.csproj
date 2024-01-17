@@ -14,6 +14,7 @@
     <PackageTags>umbraco plugin package</PackageTags>
     <AssemblyName>integrious.umbraco.forms.signaturefield</AssemblyName>
     <RootNamespace>Integrious.Umbraco.Forms.SignatureField</RootNamespace>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   
   <ItemGroup>
@@ -33,10 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="App_Plugins_Src\UmbracoFormsSignatureField\FrontEnd\Js\init.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="App_Plugins\UmbracoFormsSignatureField\BackOffice\Common\FieldTypes\signature.html">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
@@ -45,18 +42,24 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </Content>
+    <Content Include="App_Plugins_Src\UmbracoFormsSignatureField\BackOffice\Scss\signature.scss">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Plugins_Src\UmbracoFormsSignatureField\FrontEnd\Js\init.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
+  
   <ItemGroup>
-    <Folder Include="App_Plugins\UmbracoFormsSignatureField\BackOffice\Css\" />
-    <Folder Include="App_Plugins\UmbracoFormsSignatureField\FrontEnd\" />
+    <UpToDateCheckInput Include="App_Plugins_Src\UmbracoFormsSignatureField\**/*.js" />
+    <UpToDateCheckInput Include="App_Plugins_Src\UmbracoFormsSignatureField\**/*.scss" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="yarn run webpack" />
+    <Exec Command="yarn run build" />
   </Target>
 </Project>

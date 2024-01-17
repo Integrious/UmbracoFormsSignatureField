@@ -26,8 +26,9 @@ var signaturePad = (function () {
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
-            signaturePad.fromData(signaturePad.toData())
-            //signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+            // Browser will clear the canvas when it is resized, so reload the existing
+            // signature. Note that if the canvas is now smaller this may not all fit!
+            signaturePad.fromData(signaturePad.toData());
           }
 
           window.addEventListener("resize", resizeCanvas);
