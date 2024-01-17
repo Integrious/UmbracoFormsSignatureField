@@ -9,15 +9,29 @@ var signaturePad = (function () {
           var canvas = fieldWrapper.querySelector('canvas');
           var field = fieldWrapper.querySelector('input[type="hidden"]');
           var clearButton = fieldWrapper.querySelector('[data-action=clear]');
-          var signaturePad = new SignaturePad(canvas);
+          var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255,255,255)'
+          });
           signaturePad.addEventListener('endStroke', () => {
-              field.value = signaturePad.toSVG();
+              field.value = signaturePad.toDataURL('image/jpeg', 0.7);
           });
 
           clearButton.addEventListener('click', function () {
               signaturePad.clear();
               field.value = "";
           });
+
+          function resizeCanvas() {
+            const ratio =  Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+            signaturePad.fromData(signaturePad.toData())
+            //signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+          }
+
+          window.addEventListener("resize", resizeCanvas);
+          resizeCanvas();
         });
     }
 

@@ -9,7 +9,7 @@
       <UmbracoFormsSignatureFieldContentFiles Include="$(UmbracoFormsSignatureFieldContentFilesPath)" />
     </ItemGroup>
     <Message Text="Copying UmbracoFormsSignatureField files: $(UmbracoFormsSignatureFieldContentFilesPath) - #@(UmbracoFormsSignatureFieldContentFiles->Count()) files" Importance="high" />
-    <Copy SourceFiles="@(UmbracoFormsSignatureFieldContentFiles)" DestinationFiles="@(UmbracoFormsSignatureFieldContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\UmbracoFormsSignatureField\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(UmbracoFormsSignatureFieldContentFiles)" DestinationFiles="@(UmbracoFormsSignatureFieldContentFiles->'$(MSBuildProjectDirectory)\wwwroot\App_Plugins\UmbracoFormsSignatureField\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="CopyUmbracoFormsSignatureFieldViewAssets" BeforeTargets="Build">
@@ -23,7 +23,7 @@
 
   <Target Name="ClearUmbracoFormsSignatureFieldAssets" BeforeTargets="Clean">
     <ItemGroup>
-      <UmbracoFormsSignatureFieldDir Include="$(MSBuildProjectDirectory)\App_Plugins\UmbracoFormsSignatureField\" />
+      <UmbracoFormsSignatureFieldDir Include="$(MSBuildProjectDirectory)\wwwroot\App_Plugins\UmbracoFormsSignatureField\" />
     </ItemGroup>
     <Message Text="Clear old UmbracoFormsSignatureField data" Importance="high" />
     <RemoveDir Directories="@(UmbracoFormsSignatureFieldDir)" />

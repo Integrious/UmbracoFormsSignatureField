@@ -7,8 +7,15 @@ namespace Integrious.Umbraco.Forms.SignatureField.Fields;
 public class Signature : FieldType
 {
     /// <inheritdoc />
+    public override string GetDesignView() =>
+        "~/App_Plugins/UmbracoFormsSignatureField/BackOffice/Common/FieldTypes/signature.html";
+
+    /// <inheritdoc />
+    public override string RenderView => "~/App_Plugins/UmbracoFormsSignatureField/BackOffice/Common/RenderTypes/signature.html";
+
+    /// <inheritdoc />
     public override IEnumerable<string> RequiredJavascriptFiles(Field field) => new[]
-        { "~/App_Plugins/UmbracoFormsSignatureField/frontEnd.js" };
+        { "~/App_Plugins/UmbracoFormsSignatureField/FrontEnd/signatureField.js" };
 
     public Signature()
     {

@@ -27,9 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="App_Plugins\UmbracoFormsSignatureField\**" />
-    <EmbeddedResource Remove="App_Plugins\UmbracoFormsSignatureField\**" />
-    <None Remove="App_Plugins\UmbracoFormsSignatureField\**" />
+    <Compile Remove="App_Plugins\**" />
+    <EmbeddedResource Remove="App_Plugins\**" />
+    <None Remove="App_Plugins\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +37,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="App_Plugins\UmbracoFormsSignatureField\BackOffice\Common\FieldTypes\signature.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="App_Plugins\UmbracoFormsSignatureField\BackOffice\Common\RenderTypes\signature.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
     <Content Include="App_Plugins_Src\UmbracoFormsSignatureField\FrontEnd\Js\init.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
@@ -44,8 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="App_Plugins\" />
-    <Folder Include="App_Plugins_Src\UmbracoFormsSignatureField\BackOffice\" />
+    <Folder Include="App_Plugins\UmbracoFormsSignatureField\BackOffice\Css\" />
+    <Folder Include="App_Plugins\UmbracoFormsSignatureField\FrontEnd\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
