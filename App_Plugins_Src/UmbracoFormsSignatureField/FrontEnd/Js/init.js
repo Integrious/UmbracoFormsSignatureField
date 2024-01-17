@@ -11,7 +11,7 @@ var signaturePad = (function () {
           var clearButton = fieldWrapper.querySelector('[data-action=clear]');
           var signaturePad = new SignaturePad(canvas);
           signaturePad.addEventListener('endStroke', () => {
-              field.value = signaturePad.toDataURL();
+              field.value = signaturePad.toSVG();
           });
 
           clearButton.addEventListener('click', function () {
