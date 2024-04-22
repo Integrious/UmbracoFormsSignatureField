@@ -13,5 +13,6 @@
 .pnp.*
 obj/
 App_Plugins/UmbracoFormsSignatureField/
-
-bin/Debug/net8.0/
+bin/Debug/
+bin/Release/
+node_modules/
