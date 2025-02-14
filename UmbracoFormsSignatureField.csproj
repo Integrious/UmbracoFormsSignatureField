@@ -15,13 +15,15 @@
     <AssemblyName>integrious.umbraco.forms.signaturefield</AssemblyName>
     <RootNamespace>Integrious.Umbraco.Forms.SignatureField</RootNamespace>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <Version>$(VersionPrefix)$(assemblyVersion)</Version>
+    <FileVersion>$(assemblyVersion)</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="13.5.2" />
-    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="13.5.2" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.5.2" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.5.2" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="13.6.0" />
+    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="13.6.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.6.0" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.6.0" />
     <PackageReference Include="Umbraco.Forms.Core" Version="13.4.0" />
   </ItemGroup>
 
