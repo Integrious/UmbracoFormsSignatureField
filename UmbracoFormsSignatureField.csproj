@@ -15,6 +15,8 @@
     <AssemblyName>integrious.umbraco.forms.signaturefield</AssemblyName>
     <RootNamespace>Integrious.Umbraco.Forms.SignatureField</RootNamespace>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <Version>$(VersionPrefix)$(assemblyVersion)</Version>
+    <FileVersion>$(assemblyVersion)</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
