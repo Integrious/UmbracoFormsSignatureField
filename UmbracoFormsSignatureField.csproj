@@ -17,6 +17,7 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <Version>$(VersionPrefix)$(assemblyVersion)</Version>
     <FileVersion>$(assemblyVersion)</FileVersion>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
   </PropertyGroup>
   
   <ItemGroup>
