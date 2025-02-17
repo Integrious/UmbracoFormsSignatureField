@@ -15,7 +15,7 @@ public class Signature : FieldType
 
     /// <inheritdoc />
     public override IEnumerable<string> RequiredJavascriptFiles(Field field) => new[]
-        { "~/App_Plugins/UmbracoFormsSignatureField/FrontEnd/signatureField.js" };
+        { "~/App_Plugins/UmbracoFormsSignatureField/FrontEnd/signatureField.js?v=1.0.3" };
 
     public Signature()
     {
