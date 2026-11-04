@@ -12,7 +12,10 @@
 #!.yarn/cache
 .pnp.*
 obj/
-App_Plugins/UmbracoFormsSignatureField/
+# Generated into wwwroot by the sass and webpack build steps. The hand written
+# BackOffice/Common/**/*.html next to them IS source and is tracked.
+wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/Css/
+wwwroot/App_Plugins/UmbracoFormsSignatureField/FrontEnd/
 bin/Debug/
 bin/Release/
 node_modules/

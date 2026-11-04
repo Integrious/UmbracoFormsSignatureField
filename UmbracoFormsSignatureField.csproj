@@ -1,9 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ContentTargetFolders>.</ContentTargetFolders>
+
+    <!-- wwwroot/App_Plugins ships as static web assets. Umbraco serves them from /App_Plugins/...
+         rather than the default /_content/{AssemblyName}/..., which is what the base path
+         override does. Replaces the old copy-into-the-site's-wwwroot build target. -->
+    <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+
+    <!-- Views here are an Umbraco Forms theme partial, shipped as a physical .cshtml and copied
+         into the consuming site rather than compiled into this assembly. -->
+    <EnableDefaultRazorGenerateItems>false</EnableDefaultRazorGenerateItems>
+    <EnableDefaultRazorComponentItems>false</EnableDefaultRazorComponentItems>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -32,20 +42,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="App_Plugins\**" />
-    <EmbeddedResource Remove="App_Plugins\**" />
-    <None Remove="App_Plugins\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="App_Plugins\UmbracoFormsSignatureField\BackOffice\Common\FieldTypes\signature.html">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
-    <Content Include="App_Plugins\UmbracoFormsSignatureField\BackOffice\Common\RenderTypes\signature.html">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
+    <!-- App_Plugins now lives under wwwroot and is handled by the Razor SDK as static web assets,
+         so it no longer needs listing here. App_Plugins_Src is build input only - it is the sass
+         and webpack source - so it stays excluded from the output. -->
     <Content Include="App_Plugins_Src\UmbracoFormsSignatureField\BackOffice\Scss\signature.scss">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
