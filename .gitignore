@@ -1,3 +1,21 @@
+## .NET
+bin/
+obj/
+artifacts/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+*.nupkg
+*.snupkg
+TestResults/
+coverage*.xml
+*.binlog
+
+## Node
+node_modules/
+.pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -5,17 +23,11 @@
 !.yarn/sdks
 !.yarn/versions
 
-# Swap the comments on the following lines if you wish to use zero-installs
-# In that case, don't forget to run `yarn config set enableGlobalCache false`!
-# Documentation here: https://yarnpkg.com/features/caching#zero-installs
-
-#!.yarn/cache
-.pnp.*
-obj/
-# Generated into wwwroot by the sass and webpack build steps. The hand written
-# BackOffice/Common/**/*.html next to them IS source and is tracked.
-wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/Css/
-wwwroot/App_Plugins/UmbracoFormsSignatureField/FrontEnd/
-bin/Debug/
-bin/Release/
-node_modules/
+## Generated into the project's wwwroot by the sass and webpack build steps. The hand written
+## BackOffice/Common/**/*.html beside them IS source and is tracked.
+##
+## Because these are generated and ignored, a build that has not run `yarn build` produces a
+## package with no styles and no script. The csproj fails the pack in that case rather than
+## shipping one - see the VerifySignatureFieldAssets target.
+src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/Css/
+src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/FrontEnd/

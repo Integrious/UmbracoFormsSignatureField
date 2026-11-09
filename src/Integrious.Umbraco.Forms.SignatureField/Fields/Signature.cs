@@ -4,9 +4,20 @@ using Umbraco.Forms.Core.Models;
 
 namespace Integrious.Umbraco.Forms.SignatureField.Fields;
 
+/// <summary>
+/// An Umbraco Forms field that captures a signature drawn on a canvas.
+/// </summary>
+/// <remarks>
+/// The value is stored on the record as a complete JPEG data URL, so it needs no file storage and
+/// renders anywhere the record does. See <see cref="RenderView"/> for how a consumer displays it.
+/// </remarks>
 public class Signature : FieldType
 {
     /// <inheritdoc />
+    /// <remarks>
+    /// TODO: still an Umbraco Forms 13 AngularJS path, so this field has no design view in the v17
+    /// form designer. Needs the v17 equivalent; tracked in the CHANGELOG under known issues.
+    /// </remarks>
     public override string GetDesignView() =>
         "~/App_Plugins/UmbracoFormsSignatureField/BackOffice/Common/FieldTypes/signature.html";
 
@@ -30,6 +41,14 @@ public class Signature : FieldType
     public override IEnumerable<string> RequiredJavascriptFiles(Field field) => new[]
         { "~/App_Plugins/UmbracoFormsSignatureField/FrontEnd/signatureField.js" };
 
+    /// <summary>
+    /// Initialises the field type's identity and storage shape.
+    /// </summary>
+    /// <remarks>
+    /// <c>Id</c> and <c>FieldTypeViewName</c> are both persisted in consuming sites' form
+    /// definitions, so changing either detaches existing signature fields from this type. They are
+    /// covered by tests for that reason.
+    /// </remarks>
     public Signature()
     {
         Id = new Guid("4ec97b32-1801-4c84-acab-e541bee39c60");

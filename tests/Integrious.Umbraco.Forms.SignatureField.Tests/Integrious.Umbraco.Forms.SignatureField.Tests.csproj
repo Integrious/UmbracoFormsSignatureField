@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Integrious.Umbraco.Forms.SignatureField.Tests</RootNamespace>
+    <AssemblyName>Integrious.Umbraco.Forms.SignatureField.Tests</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <!-- Referencing the project would otherwise run `yarn build` on every test build. -->
+    <SkipFrontEndBuild>true</SkipFrontEndBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Integrious.Umbraco.Forms.SignatureField/Integrious.Umbraco.Forms.SignatureField.csproj" />
+  </ItemGroup>
+
+</Project>
