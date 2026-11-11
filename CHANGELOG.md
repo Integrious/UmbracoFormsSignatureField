@@ -6,12 +6,25 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-## [1.1.0] - 2026-11-09
+## [2.0.0] - 2026-11-11
 
 First release published to NuGet. Earlier versions, up to the `v/1.0.4` tag, were consumed only as
 a project reference from the one site that used them, so there is no 1.0.x package on nuget.org.
 
 Supports Umbraco 17 and Umbraco Forms 17.
+
+### Breaking
+
+A major version rather than a first minor, because anything that was referencing the project
+directly has to change:
+
+- **The assembly is renamed** from `integrious.umbraco.forms.signaturefield` to
+  `Integrious.Umbraco.Forms.SignatureField`. Any explicit reference to the old file name, or any
+  `appsettings` entry naming the assembly, needs updating.
+- **`RenderView` returns `"signature"` instead of a view path**, so displaying a submitted
+  signature is now the consumer's job - Umbraco Forms 13 resolved the old path to a view that
+  produced the `img` tag for you. See the README for what to do instead.
+- **Umbraco Forms 13 is no longer supported.** This release targets `net10.0` and Forms 17.
 
 ### Added
 

@@ -37,6 +37,7 @@
          the root of the default branch, not from develop. -->
     <PackageTags>umbraco;umbraco-package;umbraco-forms;forms;signature;canvas;signature-pad</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>See https://github.com/Integrious/UmbracoFormsSignatureField/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -52,6 +53,7 @@
   <ItemGroup>
     <None Include="buildTransitive\**" Pack="true" PackagePath="buildTransitive" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

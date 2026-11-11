@@ -30,7 +30,7 @@ The package ships two things beyond the assembly:
 
 | Package | Umbraco CMS | Umbraco Forms |
 | ------- | ----------- | ------------- |
-| 1.1.x   | 17.x        | 17.x          |
+| 2.0.x   | 17.x        | 17.x          |
 
 The dependency range is capped at the next major deliberately. This field type uses a fair amount
 of Umbraco Forms' own surface — `FieldType`, the record storage shape, and theme view resolution —
