@@ -86,11 +86,14 @@
   -->
   <Target Name="VerifySignatureFieldAssets" BeforeTargets="GenerateNuspec">
     <PropertyGroup>
-      <_SigAssets>$(MSBuildProjectDirectory)\wwwroot\App_Plugins\UmbracoFormsSignatureField</_SigAssets>
+      <!-- Forward slashes deliberately: this guard runs in CI on Linux, where a path built by
+           string concatenation is not reliably normalised, and a backslash is a legal filename
+           character. Forward slashes work on both. -->
+      <_SigAssets>$(MSBuildProjectDirectory)/wwwroot/App_Plugins/UmbracoFormsSignatureField</_SigAssets>
     </PropertyGroup>
-    <Error Condition="!Exists('$(_SigAssets)\BackOffice\Css\signature.css')"
+    <Error Condition="!Exists('$(_SigAssets)/BackOffice/Css/signature.css')"
            Text="signature.css is missing, so this package would ship without styles. Run `yarn install --immutable` then `yarn build` at the repository root before packing - the generated assets are gitignored." />
-    <Error Condition="!Exists('$(_SigAssets)\FrontEnd\signatureField.js')"
+    <Error Condition="!Exists('$(_SigAssets)/FrontEnd/signatureField.js')"
            Text="signatureField.js is missing, so this package would ship without the signature capture script. Run `yarn install --immutable` then `yarn build` at the repository root before packing - the generated assets are gitignored." />
   </Target>
 
@@ -101,8 +104,8 @@
     *package* is never built without them.
   -->
   <Target Name="BuildSignatureFieldAssets" AfterTargets="PostBuildEvent"
-          Condition="'$(SkipFrontEndBuild)' != 'true' AND Exists('$(MSBuildProjectDirectory)\..\..\node_modules')">
-    <Exec Command="yarn run build" WorkingDirectory="$(MSBuildProjectDirectory)\..\.." />
+          Condition="'$(SkipFrontEndBuild)' != 'true' AND Exists('$(MSBuildProjectDirectory)/../../node_modules')">
+    <Exec Command="yarn run build" WorkingDirectory="$(MSBuildProjectDirectory)/../.." />
   </Target>
 
 </Project>
