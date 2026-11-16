@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Integrious.Umbraco.Forms.SignatureField.Fields;
 using Umbraco.Forms.Core.Enums;
 using Umbraco.Forms.Core.Models;
@@ -105,6 +106,62 @@ public class SignatureTests
             "Front end assets have not been built; run `yarn build` at the repository root.");
 
         Assert.True(File.Exists(onDisk), $"The declared script path does not exist on disk: {onDisk}");
+    }
+
+    /// <summary>
+    /// The field type's EditView has to name a property editor UI that is actually registered, or
+    /// Umbraco Forms silently falls back to Umb.PropertyEditorUi.Label and the entry view shows
+    /// 10KB of base64 instead of the signature.
+    /// </summary>
+    /// <remarks>
+    /// Nothing but this string joins the C# to the package manifest - no compiler, no schema - so
+    /// the two are pinned together here. This is the same class of break as the RenderView path
+    /// above: it fails silently and looks like a styling problem.
+    /// </remarks>
+    [Fact]
+    public void EditView_names_a_property_editor_ui_the_package_manifest_registers()
+    {
+        Assert.Equal(Fields.Signature.SignatureEditView, new Signature().EditView);
+
+        var manifestPath = Path.Combine(
+            ProjectRoot(), "wwwroot", "App_Plugins", "UmbracoFormsSignatureField", "umbraco-package.json");
+        Assert.True(File.Exists(manifestPath), $"The package manifest is missing: {manifestPath}");
+
+        using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
+        var registered = manifest.RootElement
+            .GetProperty("extensions")
+            .EnumerateArray()
+            .Where(e => e.GetProperty("type").GetString() == "propertyEditorUi")
+            .Select(e => e.GetProperty("alias").GetString())
+            .ToList();
+
+        Assert.Contains(Fields.Signature.SignatureEditView, registered);
+    }
+
+    /// <summary>
+    /// The manifest points at the element by path, and a package ships whatever is on disk - so a
+    /// renamed or unbuilt file would register an extension that cannot load.
+    /// </summary>
+    [Fact]
+    public void The_registered_property_editor_ui_element_exists_on_disk()
+    {
+        var manifestPath = Path.Combine(
+            ProjectRoot(), "wwwroot", "App_Plugins", "UmbracoFormsSignatureField", "umbraco-package.json");
+
+        using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
+        var element = manifest.RootElement
+            .GetProperty("extensions")
+            .EnumerateArray()
+            .First(e => e.GetProperty("alias").GetString() == Fields.Signature.SignatureEditView)
+            .GetProperty("element")
+            .GetString()!;
+
+        // The manifest path is site-absolute (/App_Plugins/...); resolve it against the project's
+        // wwwroot, which is where the package puts it.
+        var onDisk = Path.Combine(
+            ProjectRoot(), "wwwroot", element.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+        Assert.True(File.Exists(onDisk), $"The element the manifest registers does not exist: {onDisk}");
     }
 
     /// <summary>Walks up from the test binaries to the project being tested.</summary>

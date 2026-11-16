@@ -1,0 +1,19 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "name": "Integrious Signature Field",
+  "allowPublicAccess": false,
+  "extensions": [
+    {
+      "type": "propertyEditorUi",
+      "alias": "Integrious.PropertyEditorUi.Signature",
+      "name": "Signature",
+      "element": "/App_Plugins/UmbracoFormsSignatureField/BackOffice/signature-property-editor-ui.js",
+      "meta": {
+        "label": "Signature",
+        "icon": "icon-edit",
+        "group": "Forms",
+        "supportsReadOnly": true
+      }
+    }
+  ]
+}

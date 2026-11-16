@@ -58,5 +58,24 @@ public class Signature : FieldType
         SortOrder = 100;
         FieldTypeViewName = "FieldType.Signature.cshtml";
         DataType = FieldDataType.LongString;
+        EditView = SignatureEditView;
     }
+
+    /// <summary>
+    /// The property editor UI the Umbraco Forms entry view uses to show a submitted signature.
+    /// </summary>
+    /// <remarks>
+    /// Must match the <c>propertyEditorUi</c> alias registered in
+    /// wwwroot/App_Plugins/UmbracoFormsSignatureField/umbraco-package.json - the two are joined by
+    /// nothing but this string, so a test pins them together.
+    ///
+    /// Without it, Forms falls back to <c>Umb.PropertyEditorUi.Label</c>, which rendered the stored
+    /// value as text: around 10KB of base64.
+    ///
+    /// This covers the entry view's edit mode only. Its read-only mode goes through
+    /// EntryRenderHelper.getRenderValue, a hard coded switch over "date", "datetime", "number" and
+    /// "file" with everything else falling through to raw text, and Umbraco Forms 17 offers no way
+    /// to extend it.
+    /// </remarks>
+    public const string SignatureEditView = "Integrious.PropertyEditorUi.Signature";
 }
