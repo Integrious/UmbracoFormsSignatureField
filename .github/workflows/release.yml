@@ -14,7 +14,8 @@ permissions:
   contents: read
 
 env:
-  SkipFrontEndBuild: 'true'
+  SkipClientBuild: 'true'
+  CLIENT_DIR: src/Integrious.Umbraco.Forms.SignatureField/Client
 
 jobs:
   release:
@@ -43,9 +44,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-
-      - name: Enable Corepack
-        run: corepack enable
+          cache: npm
+          cache-dependency-path: src/Integrious.Umbraco.Forms.SignatureField/Client/package-lock.json
 
       # This repository's history uses a `v/1.0.4` tag convention, which still matches the `v*.*.*`
       # trigger above but yields "/1.0.4" once the leading v is stripped - an invalid version that
@@ -66,11 +66,13 @@ jobs:
           echo "value=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Publishing version $VERSION"
 
-      - name: Install front end dependencies
-        run: yarn install --immutable
+      - name: Install client dependencies
+        run: npm ci
+        working-directory: ${{ env.CLIENT_DIR }}
 
-      - name: Build front end assets
-        run: yarn build
+      - name: Build client assets
+        run: npm run build
+        working-directory: ${{ env.CLIENT_DIR }}
 
       - name: Restore
         run: dotnet restore

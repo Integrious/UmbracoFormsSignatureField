@@ -64,19 +64,34 @@ all, submitted by the public. Requiring the `data:image/` prefix is enough.
 
 ## Building
 
-Front end assets are built with Yarn and committed nowhere — they are generated into the project's
-`wwwroot` and gitignored.
+Client assets live in `src/Integrious.Umbraco.Forms.SignatureField/Client` and are built with npm
+and Vite, following Umbraco's own `dotnet new umbraco-extension` layout. They are committed
+nowhere — the build generates them into the project's `wwwroot`, which is gitignored.
 
 ```sh
-yarn install --immutable
-yarn build          # sass + webpack
+cd src/Integrious.Umbraco.Forms.SignatureField/Client
+npm ci
+npm run build       # back office bundle, front end script, sass
+cd ../../..
 dotnet build
 dotnet test
 ```
 
-`dotnet build` re-runs `yarn build` for you when `node_modules` is present. `dotnet pack` fails if
-the generated assets are missing, rather than producing a package that installs cleanly and then
-does nothing.
+There are two separate bundles, because they have opposite needs:
+
+- **`src/backoffice`** → the property editor UI the Forms entry view uses. Everything under
+  `@umbraco-cms` is left **external**, because those specifiers are in the back office's own
+  importmap and the browser resolves them; bundling them would ship a second copy of Umbraco.
+- **`src/frontend`** → the script the public form loads. Nothing is external here, because a
+  visitor's browser has no importmap and `signature_pad` has to be bundled in.
+
+Output names are fixed rather than hashed. The Web SDK globs `wwwroot` into static web assets at
+evaluation time, before any target runs, so the set of files on disk has to stay stable between
+builds.
+
+`dotnet build` re-runs the client build for you when `Client/node_modules` is present; set
+`SkipClientBuild=true` to suppress that. `dotnet pack` fails if the generated assets are missing,
+rather than producing a package that installs cleanly and then does nothing.
 
 ## Licence
 

@@ -31,6 +31,15 @@ directly has to change:
 - Published as `Integrious.Umbraco.Forms.SignatureField`, with the `buildTransitive` targets that
   copy the Forms theme partial into the consuming site and the `App_Plugins` assets shipped as
   static web assets.
+- **A property editor UI, so the Forms entry view shows the signature rather than its stored
+  value.** Umbraco Forms resolves a field type's `EditView` against the registered
+  `propertyEditorUi` extensions and falls back to `Umb.PropertyEditorUi.Label` when it is unset,
+  which rendered around 10KB of base64 as text. This package previously registered no back office
+  extensions at all - it had no `umbraco-package.json`, and the only client-side files it shipped
+  were two Umbraco Forms 13 AngularJS views that nothing loads.
+  This covers the entry view's **edit mode** only. Its read-only mode goes through
+  `EntryRenderHelper.getRenderValue`, a hard coded switch over `date`, `datetime`, `number` and
+  `file` that falls through to raw text, and Forms 17 exposes no way to extend it.
 - A test project covering the field type's external contract: the field type id and view name
   (both persisted in consumers' form definitions), the data type, and that the script path the
   field declares matches where the build actually writes it.
@@ -48,6 +57,12 @@ directly has to change:
   `Integrious.Umbraco.Forms.SignatureField`, matching the package id and namespace.
 - Umbraco and Forms dependencies are now version ranges (`[17.0.0, 18.0.0)`) rather than exact
   pins, so a consuming site can resolve any 17.x.
+- **The client toolchain moved from Yarn and webpack to npm, Vite and TypeScript**, matching
+  Umbraco's own `dotnet new umbraco-extension` template: a `Client/` folder beside the project,
+  `@umbraco-cms` left external for the back office bundle, and fixed rather than hashed output
+  names so the static web assets glob stays stable between builds. Nothing a consumer installs
+  changes shape; this is about being able to add back office components without inventing a build
+  each time.
 
 ### Fixed
 

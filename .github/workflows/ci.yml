@@ -11,9 +11,10 @@ permissions:
   contents: read
 
 env:
-  # The front end assets are built explicitly below, so the MSBuild target that rebuilds them on a
-  # local build should stay out of the way rather than running yarn a second time.
-  SkipFrontEndBuild: 'true'
+  # The client assets are built explicitly below, so the MSBuild target that rebuilds them on a
+  # local build should stay out of the way rather than running the build twice.
+  SkipClientBuild: 'true'
+  CLIENT_DIR: src/Integrious.Umbraco.Forms.SignatureField/Client
 
 jobs:
   build:
@@ -31,10 +32,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-
-      # Yarn 4, provisioned from the packageManager field in package.json.
-      - name: Enable Corepack
-        run: corepack enable
+          cache: npm
+          cache-dependency-path: src/Integrious.Umbraco.Forms.SignatureField/Client/package-lock.json
 
       - name: Cache NuGet packages
         uses: actions/cache@v6
@@ -43,13 +42,15 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props') }}
           restore-keys: nuget-${{ runner.os }}-
 
-      - name: Install front end dependencies
-        run: yarn install --immutable
+      - name: Install client dependencies
+        run: npm ci
+        working-directory: ${{ env.CLIENT_DIR }}
 
-      # The sass and webpack output is gitignored, so without this the pack below fails its asset
-      # guard - which is the point of that guard.
-      - name: Build front end assets
-        run: yarn build
+      # The TypeScript, sass and bundled output are all gitignored, so without this the pack below
+      # fails its asset guard - which is the point of that guard.
+      - name: Build client assets
+        run: npm run build
+        working-directory: ${{ env.CLIENT_DIR }}
 
       - name: Restore
         run: dotnet restore

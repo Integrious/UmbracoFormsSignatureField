@@ -109,60 +109,66 @@ public class SignatureTests
     }
 
     /// <summary>
-    /// The field type's EditView has to name a property editor UI that is actually registered, or
-    /// Umbraco Forms silently falls back to Umb.PropertyEditorUi.Label and the entry view shows
-    /// 10KB of base64 instead of the signature.
+    /// The field type's EditView has to name a property editor UI that the client bundle actually
+    /// registers, or Umbraco Forms silently falls back to Umb.PropertyEditorUi.Label and the entry
+    /// view shows 10KB of base64 instead of the signature.
     /// </summary>
     /// <remarks>
-    /// Nothing but this string joins the C# to the package manifest - no compiler, no schema - so
-    /// the two are pinned together here. This is the same class of break as the RenderView path
-    /// above: it fails silently and looks like a styling problem.
+    /// Nothing but this string joins the C# to the TypeScript - no compiler, no schema - so the
+    /// two are pinned together here. This is the same class of break as the RenderView path above:
+    /// it fails silently and looks like a styling problem.
     /// </remarks>
     [Fact]
-    public void EditView_names_a_property_editor_ui_the_package_manifest_registers()
+    public void EditView_names_the_property_editor_ui_the_client_bundle_registers()
     {
         Assert.Equal(Fields.Signature.SignatureEditView, new Signature().EditView);
 
+        var manifestSource = Path.Combine(ClientRoot(), "src", "backoffice", "index.ts");
+        Assert.True(File.Exists(manifestSource), $"The client manifest source is missing: {manifestSource}");
+
+        Assert.Contains(
+            $"'{Fields.Signature.SignatureEditView}'",
+            File.ReadAllText(manifestSource));
+    }
+
+    /// <summary>
+    /// The package manifest points at the built bundle by path, and a package ships whatever is on
+    /// disk - so a renamed entry or an unbuilt client would register a bundle that cannot load,
+    /// taking every extension in it with it.
+    /// </summary>
+    [Fact]
+    public void The_package_manifest_points_at_the_bundle_the_client_build_produces()
+    {
         var manifestPath = Path.Combine(
             ProjectRoot(), "wwwroot", "App_Plugins", "UmbracoFormsSignatureField", "umbraco-package.json");
         Assert.True(File.Exists(manifestPath), $"The package manifest is missing: {manifestPath}");
 
         using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
-        var registered = manifest.RootElement
+        var bundle = manifest.RootElement
             .GetProperty("extensions")
             .EnumerateArray()
-            .Where(e => e.GetProperty("type").GetString() == "propertyEditorUi")
-            .Select(e => e.GetProperty("alias").GetString())
-            .ToList();
-
-        Assert.Contains(Fields.Signature.SignatureEditView, registered);
-    }
-
-    /// <summary>
-    /// The manifest points at the element by path, and a package ships whatever is on disk - so a
-    /// renamed or unbuilt file would register an extension that cannot load.
-    /// </summary>
-    [Fact]
-    public void The_registered_property_editor_ui_element_exists_on_disk()
-    {
-        var manifestPath = Path.Combine(
-            ProjectRoot(), "wwwroot", "App_Plugins", "UmbracoFormsSignatureField", "umbraco-package.json");
-
-        using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
-        var element = manifest.RootElement
-            .GetProperty("extensions")
-            .EnumerateArray()
-            .First(e => e.GetProperty("alias").GetString() == Fields.Signature.SignatureEditView)
-            .GetProperty("element")
+            .Single(e => e.GetProperty("type").GetString() == "bundle")
+            .GetProperty("js")
             .GetString()!;
 
-        // The manifest path is site-absolute (/App_Plugins/...); resolve it against the project's
-        // wwwroot, which is where the package puts it.
-        var onDisk = Path.Combine(
-            ProjectRoot(), "wwwroot", element.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+        // The vite config names this entry explicitly, so the two have to agree.
+        var viteConfig = File.ReadAllText(Path.Combine(ClientRoot(), "vite.config.backoffice.ts"));
+        Assert.Contains($"'{Path.GetFileName(bundle)}'", viteConfig);
 
-        Assert.True(File.Exists(onDisk), $"The element the manifest registers does not exist: {onDisk}");
+        // The manifest path is site-absolute (/App_Plugins/...); resolve it against the project's
+        // wwwroot, which is where the build puts it. Skipped when the client has not been built,
+        // because that is the pack guard's job to report, not this test's.
+        var onDisk = Path.Combine(
+            ProjectRoot(), "wwwroot", bundle.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+        Assert.SkipUnless(
+            Directory.Exists(Path.GetDirectoryName(onDisk)!),
+            "The client has not been built; run `npm run build` in Client/.");
+        Assert.True(File.Exists(onDisk), $"The bundle the manifest registers does not exist: {onDisk}");
     }
+
+    /// <summary>The client build's source directory.</summary>
+    private static string ClientRoot() => Path.Combine(ProjectRoot(), "Client");
 
     /// <summary>Walks up from the test binaries to the project being tested.</summary>
     private static string ProjectRoot()
