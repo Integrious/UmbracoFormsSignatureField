@@ -13,13 +13,12 @@ namespace Integrious.Umbraco.Forms.SignatureField.Fields;
 /// </remarks>
 public class Signature : FieldType
 {
-    /// <inheritdoc />
-    /// <remarks>
-    /// TODO: still an Umbraco Forms 13 AngularJS path, so this field has no design view in the v17
-    /// form designer. Needs the v17 equivalent; tracked in the CHANGELOG under known issues.
-    /// </remarks>
-    public override string GetDesignView() =>
-        "~/App_Plugins/UmbracoFormsSignatureField/BackOffice/Common/FieldTypes/signature.html";
+    // GetDesignView is deliberately not overridden. It returned an Umbraco Forms 13 AngularJS view
+    // path, and both that view and the stylesheet that went with it have been deleted: Forms 17 has
+    // no AngularJS and nothing loads either. The base implementation points at an equally dead path
+    // inside Forms' own App_Plugins folder, so neither is correct - the v17 equivalent is a
+    // PreviewView naming a `formsFieldPreview` extension, which is tracked in the CHANGELOG under
+    // known issues. Overriding it with our own dead path only made the gap harder to see.
 
     /// <summary>
     /// The name the back office uses to decide how to display a submitted signature.

@@ -73,7 +73,6 @@
 
   <ItemGroup>
     <UpToDateCheckInput Include="Client\src\**\*.ts" />
-    <UpToDateCheckInput Include="Client\src\**\*.scss" />
   </ItemGroup>
 
   <ItemGroup>
@@ -98,8 +97,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(_SigAssets)/BackOffice/signature-field.js')"
            Text="signature-field.js is missing, so the back office would fall back to showing the raw stored value. $(_ClientBuildHint)" />
-    <Error Condition="!Exists('$(_SigAssets)/BackOffice/Css/signature.css')"
-           Text="signature.css is missing, so this package would ship without styles. $(_ClientBuildHint)" />
     <Error Condition="!Exists('$(_SigAssets)/FrontEnd/signatureField.js')"
            Text="signatureField.js is missing, so this package would ship without the signature capture script. $(_ClientBuildHint)" />
   </Target>

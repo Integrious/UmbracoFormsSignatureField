@@ -21,6 +21,8 @@ Common category.
 The package ships two things beyond the assembly:
 
 - its `App_Plugins` assets, as static web assets, so there is nothing to copy into your `wwwroot`;
+  these are the back office bundle and the front end capture script. **No stylesheet** - see
+  *Styling* below;
 - `Views/partials/forms/themes/default/fieldtypes/FieldType.Signature.cshtml`, which is copied into
   your site on build. Umbraco Forms resolves theme partials from the file system rather than from
   an assembly, so this one has to exist as a physical file. Customise it in place if you want
@@ -36,6 +38,40 @@ The dependency range is capped at the next major deliberately. This field type u
 of Umbraco Forms' own surface — `FieldType`, the record storage shape, and theme view resolution —
 and that surface changed substantially between Forms 13 and 17. The range will be widened once it
 has actually been tested against a newer major, not in anticipation of it.
+
+## Styling
+
+The package ships no front end stylesheet, so the signature canvas renders at the browser default
+of 300×150 until you style it. The markup the theme partial produces is:
+
+```html
+<div class="itg-signature-field">
+    <div class="signature-pad-body">
+        <canvas></canvas>
+    </div>
+    <div class="signature-pad-footer">
+        <div class="signature-pad--actions">
+            <div><button class="itg-signature-clear" data-action="clear">Clear</button></div>
+        </div>
+    </div>
+    <input type="hidden" />
+</div>
+```
+
+A reasonable starting point:
+
+```css
+.itg-signature-field .signature-pad-body { display: flex; flex-direction: column; }
+.itg-signature-field .signature-pad-body canvas {
+    border: 1px solid #ccc; width: 100%; max-width: 650px; height: 300px;
+    background: #fff; margin-bottom: 5px;
+}
+.itg-signature-field .signature-pad-footer { display: flex; justify-content: flex-end; }
+```
+
+Note that `signature-pad-footer` is a **sibling** of `signature-pad-body`, not a child. Sizing the
+canvas matters for more than looks: the script measures `offsetWidth`/`offsetHeight` to scale the
+drawing surface for the device pixel ratio, so an unsized canvas captures at 300×150.
 
 ## Displaying a submitted signature
 
@@ -71,7 +107,7 @@ nowhere — the build generates them into the project's `wwwroot`, which is giti
 ```sh
 cd src/Integrious.Umbraco.Forms.SignatureField/Client
 npm ci
-npm run build       # back office bundle, front end script, sass
+npm run build       # back office bundle and front end script
 cd ../../..
 dotnet build
 dotnet test

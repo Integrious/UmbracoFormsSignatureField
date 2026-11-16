@@ -74,6 +74,20 @@ directly has to change:
   backgrounds the first on Linux, so a CI build could pack a stylesheet that sass had not finished
   writing.
 
+### Removed
+
+- **The stylesheet, and the two Umbraco Forms 13 AngularJS views it styled.** That stylesheet was a
+  *back office* one, injected by an `IManifestFilter` which the v17 port deleted along with the
+  views - so nothing has loaded any of it since. Its selectors look like front end ones, but they
+  targeted the v13 design view, whose markup happens to share class names with the theme partial.
+  The package has therefore never contributed front end styling, and now says so: see *Styling* in
+  the README for the markup and a starting stylesheet. The back office styling it used to provide
+  is now carried inside the property editor UI component.
+- `GetDesignView()` is no longer overridden. It named one of those deleted views, and the base
+  implementation names an equally dead path inside Forms' own App_Plugins folder - neither is right
+  in v17. The equivalent is a `PreviewView` naming a `formsFieldPreview` extension, which remains a
+  known issue below.
+
 ### Known issues
 
 - `GetDesignView()` still returns an Umbraco Forms 13 AngularJS path, so the field has no design

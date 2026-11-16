@@ -16,13 +16,12 @@ coverage*.xml
 ## Node
 node_modules/
 
-## Generated into the project's wwwroot by the client build (Client/). The hand written
-## BackOffice/Common/**/*.html beside them IS source and is tracked.
+## Everything the client build (Client/) writes into the project's wwwroot. Both folders are
+## generated in their entirety; the only tracked file under App_Plugins is umbraco-package.json,
+## which is hand written and sits above them.
 ##
 ## Because these are generated and ignored, a build that has not run the client build produces a
 ## package that installs cleanly and then does nothing. The csproj fails the pack in that case
 ## rather than shipping one - see the VerifySignatureFieldAssets target.
-src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/Css/
-src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/signature-field.js*
-src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/signature-property-editor-ui.element.js*
+src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/
 src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/FrontEnd/

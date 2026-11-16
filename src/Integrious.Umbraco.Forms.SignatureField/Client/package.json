@@ -4,15 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc && npm run build:backoffice && npm run build:frontend && npm run build:css",
+    "build": "tsc && npm run build:backoffice && npm run build:frontend",
     "build:backoffice": "vite build --config vite.config.backoffice.ts",
     "build:frontend": "vite build --config vite.config.frontend.ts",
-    "build:css": "sass src/styles/signature.scss ../wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/Css/signature.css -s compressed",
     "watch": "tsc && vite build --config vite.config.backoffice.ts --watch"
   },
   "devDependencies": {
     "@umbraco-cms/backoffice": "^17.0.0",
-    "sass": "^1.69.7",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   },
