@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-## [2.0.0] - 2026-11-11
+## [2.0.0] - 2026-11-16
 
 First release published to NuGet. Earlier versions, up to the `v/1.0.4` tag, were consumed only as
 a project reference from the one site that used them, so there is no 1.0.x package on nuget.org.
@@ -40,6 +40,12 @@ directly has to change:
   This covers the entry view's **edit mode** only. Its read-only mode goes through
   `EntryRenderHelper.getRenderValue`, a hard coded switch over `date`, `datetime`, `number` and
   `file` that falls through to raw text, and Forms 17 exposes no way to extend it.
+- **A minimal default front end stylesheet**, included on any page with a signature field via
+  `RequiredCssFiles`, and switched off with `Integrious:SignatureField:IncludeDefaultStylesheet`.
+  One rule, sizing the canvas - which is not cosmetic, because the capture script scales the
+  drawing surface from the canvas' measured size, so an unsized canvas captures at the browser
+  default of 300x150. See *Styling* in the README for why the switch is site-wide rather than
+  per-form, unlike Umbraco Forms' own `DisableDefaultStylesheet`.
 - A test project covering the field type's external contract: the field type id and view name
   (both persisted in consumers' form definitions), the data type, and that the script path the
   field declares matches where the build actually writes it.
@@ -53,6 +59,9 @@ directly has to change:
   into an `img` tag. Forms 17 has no AngularJS and instead copies `RenderView` onto the record
   schema as the column's view, where consumers match on short names like `"date"` and `"file"`. A
   path matched nothing, so a submitted signature was rendered as text - around 10KB of base64.
+- **The actions wrapper in the theme partial is now `signature-pad-actions`**, not
+  `signature-pad--actions`. The double hyphen was a typo rather than a BEM modifier - nothing had
+  ever selected on it, here or in the one site using the package.
 - Assembly renamed from `integrious.umbraco.forms.signaturefield` to
   `Integrious.Umbraco.Forms.SignatureField`, matching the package id and namespace.
 - Umbraco and Forms dependencies are now version ranges (`[17.0.0, 18.0.0)`) rather than exact
@@ -80,9 +89,9 @@ directly has to change:
   *back office* one, injected by an `IManifestFilter` which the v17 port deleted along with the
   views - so nothing has loaded any of it since. Its selectors look like front end ones, but they
   targeted the v13 design view, whose markup happens to share class names with the theme partial.
-  The package has therefore never contributed front end styling, and now says so: see *Styling* in
-  the README for the markup and a starting stylesheet. The back office styling it used to provide
-  is now carried inside the property editor UI component.
+  The back office styling it used to provide is now carried inside the property editor UI component,
+  and the front end styling it never provided is now a deliberate, much smaller stylesheet - see
+  *Added* above.
 - `GetDesignView()` is no longer overridden. It named one of those deleted views, and the base
   implementation names an equally dead path inside Forms' own App_Plugins folder - neither is right
   in v17. The equivalent is a `PreviewView` naming a `formsFieldPreview` extension, which remains a

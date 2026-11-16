@@ -99,11 +99,13 @@
            Text="signature-field.js is missing, so the back office would fall back to showing the raw stored value. $(_ClientBuildHint)" />
     <Error Condition="!Exists('$(_SigAssets)/FrontEnd/signatureField.js')"
            Text="signatureField.js is missing, so this package would ship without the signature capture script. $(_ClientBuildHint)" />
+    <Error Condition="!Exists('$(_SigAssets)/FrontEnd/signatureField.css')"
+           Text="signatureField.css is missing, so RequiredCssFiles would ask Umbraco Forms to load a stylesheet that is not in the package - a 404 on every form page. $(_ClientBuildHint)" />
   </Target>
 
   <!--
-    Rebuilds the client assets on a local build, so that editing the TypeScript or scss and pressing
-    build does the expected thing. Skipped when Client/node_modules is absent - a restore-only CI
+    Rebuilds the client assets on a local build, so that editing the TypeScript or the stylesheet
+    and pressing build does the expected thing. Skipped when Client/node_modules is absent - a restore-only CI
     step, or a machine with no Node - rather than failing; the pack guard above is what guarantees
     a *package* is never built without them.
   -->

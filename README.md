@@ -21,8 +21,8 @@ Common category.
 The package ships two things beyond the assembly:
 
 - its `App_Plugins` assets, as static web assets, so there is nothing to copy into your `wwwroot`;
-  these are the back office bundle and the front end capture script. **No stylesheet** - see
-  *Styling* below;
+  these are the back office bundle, the front end capture script, and a minimal default stylesheet
+  that can be switched off - see *Styling* below;
 - `Views/partials/forms/themes/default/fieldtypes/FieldType.Signature.cshtml`, which is copied into
   your site on build. Umbraco Forms resolves theme partials from the file system rather than from
   an assembly, so this one has to exist as a physical file. Customise it in place if you want
@@ -41,8 +41,42 @@ has actually been tested against a newer major, not in anticipation of it.
 
 ## Styling
 
-The package ships no front end stylesheet, so the signature canvas renders at the browser default
-of 300×150 until you style it. The markup the theme partial produces is:
+The package ships one stylesheet, included automatically on any page containing a signature field:
+
+```css
+.itg-signature-field .signature-pad-body canvas {
+    border: 1px solid grey; width: 100%; height: 300px;
+    background: #fff; margin-bottom: 5px;
+}
+```
+
+That is deliberately the whole of it. Sizing the canvas is not cosmetic — the script measures
+`offsetWidth`/`offsetHeight` to scale the drawing surface for the device pixel ratio, so an unsized
+canvas captures at the browser default of 300×150 and signatures come out coarse. Everything else
+is left alone, because a package styling the surrounding layout only fights your theme.
+
+To turn it off, in `appsettings.json`:
+
+```json
+{
+  "Integrious": {
+    "SignatureField": {
+      "IncludeDefaultStylesheet": false
+    }
+  }
+}
+```
+
+This is site-wide rather than per-form, which is an unfortunate mismatch with Umbraco Forms' own
+per-form **Disable default stylesheet** setting. Honouring that would be the better fit, but
+`FieldType.RequiredCssFiles` is handed only the `Field`, and a field has no back-reference to its
+form — so the flag cannot be read from where the decision has to be made.
+
+The stylesheet is also only loaded if your theme renders form stylesheets at all. The default theme
+does, via `@Html.RenderFormsStylesheets(Url, Model)` in `Script.cshtml`; a custom theme that has
+dropped that call will not load this one however it is configured.
+
+The markup the theme partial produces, if you are styling it yourself:
 
 ```html
 <div class="itg-signature-field">
@@ -50,7 +84,7 @@ of 300×150 until you style it. The markup the theme partial produces is:
         <canvas></canvas>
     </div>
     <div class="signature-pad-footer">
-        <div class="signature-pad--actions">
+        <div class="signature-pad-actions">
             <div><button class="itg-signature-clear" data-action="clear">Clear</button></div>
         </div>
     </div>
@@ -58,20 +92,7 @@ of 300×150 until you style it. The markup the theme partial produces is:
 </div>
 ```
 
-A reasonable starting point:
-
-```css
-.itg-signature-field .signature-pad-body { display: flex; flex-direction: column; }
-.itg-signature-field .signature-pad-body canvas {
-    border: 1px solid #ccc; width: 100%; max-width: 650px; height: 300px;
-    background: #fff; margin-bottom: 5px;
-}
-.itg-signature-field .signature-pad-footer { display: flex; justify-content: flex-end; }
-```
-
-Note that `signature-pad-footer` is a **sibling** of `signature-pad-body`, not a child. Sizing the
-canvas matters for more than looks: the script measures `offsetWidth`/`offsetHeight` to scale the
-drawing surface for the device pixel ratio, so an unsized canvas captures at 300×150.
+Note that `signature-pad-footer` is a **sibling** of `signature-pad-body`, not a child.
 
 ## Displaying a submitted signature
 
@@ -118,8 +139,9 @@ There are two separate bundles, because they have opposite needs:
 - **`src/backoffice`** → the property editor UI the Forms entry view uses. Everything under
   `@umbraco-cms` is left **external**, because those specifiers are in the back office's own
   importmap and the browser resolves them; bundling them would ship a second copy of Umbraco.
-- **`src/frontend`** → the script the public form loads. Nothing is external here, because a
-  visitor's browser has no importmap and `signature_pad` has to be bundled in.
+- **`src/frontend`** → the script the public form loads, plus the default stylesheet, which the
+  entry imports so Vite extracts it alongside. Nothing is external here, because a visitor's
+  browser has no importmap and `signature_pad` has to be bundled in.
 
 Output names are fixed rather than hashed. The Web SDK globs `wwwroot` into static web assets at
 evaluation time, before any target runs, so the set of files on disk has to stay stable between

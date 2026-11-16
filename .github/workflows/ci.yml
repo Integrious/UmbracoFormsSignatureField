@@ -46,8 +46,8 @@ jobs:
         run: npm ci
         working-directory: ${{ env.CLIENT_DIR }}
 
-      # The TypeScript, sass and bundled output are all gitignored, so without this the pack below
-      # fails its asset guard - which is the point of that guard.
+      # The bundled script, stylesheet and back office output are all gitignored, so without this
+      # the pack below fails its asset guard - which is the point of that guard.
       - name: Build client assets
         run: npm run build
         working-directory: ${{ env.CLIENT_DIR }}

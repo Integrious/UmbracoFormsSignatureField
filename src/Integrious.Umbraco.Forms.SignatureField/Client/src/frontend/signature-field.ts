@@ -1,5 +1,11 @@
 import SignaturePad from 'signature_pad';
 
+// Imported for its side effect on the *build*, not at runtime: Vite extracts this to a separate
+// signatureField.css rather than injecting it, and Signature.RequiredCssFiles is what asks Umbraco
+// Forms to load it. Importing it here rather than giving it its own Vite config is what ties the
+// two outputs to one entry point, so neither can be built without the other.
+import './signature-field.css';
+
 /**
  * Wires up every signature field on the page.
  *

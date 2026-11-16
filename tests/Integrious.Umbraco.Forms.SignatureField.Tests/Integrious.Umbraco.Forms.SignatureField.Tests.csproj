@@ -6,11 +6,14 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <!-- Referencing the project would otherwise run `yarn build` on every test build. -->
-    <SkipFrontEndBuild>true</SkipFrontEndBuild>
+    <!-- Referencing the project would otherwise run the client build on every test build. The
+         property was still called SkipFrontEndBuild after the move from yarn to Vite renamed it, so
+         it had silently stopped suppressing anything. -->
+    <SkipClientBuild>true</SkipClientBuild>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
     <PackageReference Include="xunit.v3" Version="4.0.2" />
   </ItemGroup>
 

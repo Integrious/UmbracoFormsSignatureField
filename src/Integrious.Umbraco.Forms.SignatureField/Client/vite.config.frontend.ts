@@ -21,6 +21,11 @@ export default defineConfig({
     lib: {
       entry: 'src/frontend/signature-field.ts',
       formats: ['es'],
+      // The default stylesheet, imported by the entry and extracted here rather than injected.
+      // Named explicitly for the same two reasons as the JS: the static web assets glob needs a
+      // stable name, and Signature.RequiredCssFiles names this file. Without this it would be
+      // called after the package name, which is not what the C# asks Umbraco Forms to load.
+      cssFileName: 'signatureField',
     },
     rollupOptions: {
       output: {

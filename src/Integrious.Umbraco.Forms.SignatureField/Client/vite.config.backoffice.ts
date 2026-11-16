@@ -10,8 +10,8 @@ import { defineConfig } from 'vite';
 // target runs - so the set of files on disk has to stay stable across builds:
 //   * fixed, unhashed names for the entry and for every chunk, so the glob can never point at a
 //     file a later build renamed;
-//   * emptyOutDir off, because this folder also holds hand written source and the sass output,
-//     which this build does not own.
+//   * emptyOutDir off, because the wwwroot tree also holds the hand written umbraco-package.json
+//     and the front end build's output, neither of which this build owns.
 export default defineConfig({
   build: {
     target: 'es2022',

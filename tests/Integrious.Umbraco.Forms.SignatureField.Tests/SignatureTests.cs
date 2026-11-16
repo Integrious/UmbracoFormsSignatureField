@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Integrious.Umbraco.Forms.SignatureField.Fields;
+using Microsoft.Extensions.Options;
 using Umbraco.Forms.Core.Enums;
 using Umbraco.Forms.Core.Models;
 using Xunit;
@@ -30,7 +31,7 @@ public class SignatureTests
     [Fact]
     public void RenderView_is_the_short_name_a_v17_consumer_matches_on()
     {
-        Assert.Equal("signature", new Signature().RenderView);
+        Assert.Equal("signature", CreateSignature().RenderView);
     }
 
     /// <summary>
@@ -41,7 +42,7 @@ public class SignatureTests
     [Fact]
     public void RenderView_is_not_a_view_path()
     {
-        var renderView = new Signature().RenderView;
+        var renderView = CreateSignature().RenderView;
 
         Assert.DoesNotContain("/", renderView);
         Assert.DoesNotContain("~", renderView);
@@ -56,7 +57,7 @@ public class SignatureTests
     [Fact]
     public void Id_is_unchanged()
     {
-        Assert.Equal(new Guid("4ec97b32-1801-4c84-acab-e541bee39c60"), new Signature().Id);
+        Assert.Equal(new Guid("4ec97b32-1801-4c84-acab-e541bee39c60"), CreateSignature().Id);
     }
 
     /// <summary>
@@ -66,7 +67,7 @@ public class SignatureTests
     [Fact]
     public void FieldTypeViewName_is_unchanged()
     {
-        Assert.Equal("FieldType.Signature.cshtml", new Signature().FieldTypeViewName);
+        Assert.Equal("FieldType.Signature.cshtml", CreateSignature().FieldTypeViewName);
     }
 
     /// <summary>
@@ -76,26 +77,26 @@ public class SignatureTests
     [Fact]
     public void DataType_is_LongString()
     {
-        Assert.Equal(FieldDataType.LongString, new Signature().DataType);
+        Assert.Equal(FieldDataType.LongString, CreateSignature().DataType);
     }
 
     /// <summary>
     /// The script path the field asks Umbraco Forms to include on the front end has to match where
-    /// the build actually puts the file, and that file is webpack output. The two have no compiler
-    /// relationship, so nothing else would catch them drifting apart - including moving the webpack
-    /// output directory, which is configured in a different repository root file.
+    /// the build actually puts the file, and that file is Vite output. The two have no compiler
+    /// relationship, so nothing else would catch them drifting apart - including renaming the Vite
+    /// entry, which is configured in a file C# never sees.
     /// </summary>
     [Fact]
     public void RequiredJavascriptFiles_points_at_a_file_the_build_actually_produces()
     {
-        var declared = new Signature().RequiredJavascriptFiles(new Field());
+        var declared = CreateSignature().RequiredJavascriptFiles(new Field());
 
         var path = Assert.Single(declared);
         Assert.Equal("~/App_Plugins/UmbracoFormsSignatureField/FrontEnd/signatureField.js", path);
 
         // Resolve the declared virtual path against the project's wwwroot and check it exists.
-        // Skipped when the asset has not been generated, because `yarn build` is a separate step
-        // and a missing asset is the pack guard's job to report, not this test's.
+        // Skipped when the asset has not been generated, because the client build is a separate
+        // step and a missing asset is the pack guard's job to report, not this test's.
         var onDisk = Path.Combine(
             ProjectRoot(),
             "wwwroot",
@@ -103,7 +104,7 @@ public class SignatureTests
 
         Assert.SkipUnless(
             Directory.Exists(Path.GetDirectoryName(onDisk)!),
-            "Front end assets have not been built; run `yarn build` at the repository root.");
+            "Front end assets have not been built; run `npm run build` in Client/.");
 
         Assert.True(File.Exists(onDisk), $"The declared script path does not exist on disk: {onDisk}");
     }
@@ -121,7 +122,7 @@ public class SignatureTests
     [Fact]
     public void EditView_names_the_property_editor_ui_the_client_bundle_registers()
     {
-        Assert.Equal(Fields.Signature.SignatureEditView, new Signature().EditView);
+        Assert.Equal(Fields.Signature.SignatureEditView, CreateSignature().EditView);
 
         var manifestSource = Path.Combine(ClientRoot(), "src", "backoffice", "index.ts");
         Assert.True(File.Exists(manifestSource), $"The client manifest source is missing: {manifestSource}");
@@ -166,6 +167,94 @@ public class SignatureTests
             "The client has not been built; run `npm run build` in Client/.");
         Assert.True(File.Exists(onDisk), $"The bundle the manifest registers does not exist: {onDisk}");
     }
+
+    /// <summary>
+    /// The default stylesheet is included by default, and names a file the build actually produces.
+    /// </summary>
+    /// <remarks>
+    /// The same joint as the script path above, with the same absence of any compiler relationship:
+    /// the C# names signatureField.css and the Vite config's <c>cssFileName</c> decides what the
+    /// build writes. A mismatch is a 404 on every form page, which is easy to miss because the
+    /// field still works - it just captures at the browser's default 300x150.
+    /// </remarks>
+    [Fact]
+    public void RequiredCssFiles_defaults_to_a_stylesheet_the_build_actually_produces()
+    {
+        var declared = CreateSignature().RequiredCssFiles(new Field());
+
+        var path = Assert.Single(declared);
+        Assert.Equal("~/App_Plugins/UmbracoFormsSignatureField/FrontEnd/signatureField.css", path);
+        Assert.Equal(Fields.Signature.DefaultStylesheet, path);
+
+        var viteConfig = File.ReadAllText(Path.Combine(ClientRoot(), "vite.config.frontend.ts"));
+        Assert.Contains(
+            $"cssFileName: '{Path.GetFileNameWithoutExtension(path)}'",
+            viteConfig,
+            StringComparison.Ordinal);
+
+        var onDisk = Path.Combine(
+            ProjectRoot(),
+            "wwwroot",
+            path.Replace("~/", string.Empty).Replace('/', Path.DirectorySeparatorChar));
+
+        Assert.SkipUnless(
+            Directory.Exists(Path.GetDirectoryName(onDisk)!),
+            "Front end assets have not been built; run `npm run build` in Client/.");
+
+        Assert.True(File.Exists(onDisk), $"The declared stylesheet does not exist on disk: {onDisk}");
+    }
+
+    /// <summary>
+    /// The stylesheet has to style the markup the shipped theme partial actually produces. These
+    /// two files have no relationship a compiler can check, and the package has already shipped a
+    /// stylesheet whose selectors matched a different view entirely - nesting the footer inside the
+    /// body, and naming a canvas class the partial does not use - which is how it came to be
+    /// believed broken when it had simply never been loaded.
+    /// </summary>
+    [Fact]
+    public void The_default_stylesheet_selects_the_markup_the_theme_partial_renders()
+    {
+        var css = File.ReadAllText(
+            Path.Combine(ClientRoot(), "src", "frontend", "signature-field.css"));
+        var partial = File.ReadAllText(Path.Combine(
+            ProjectRoot(),
+            "Views", "partials", "forms", "themes", "default", "fieldtypes",
+            "FieldType.Signature.cshtml"));
+
+        // Every class the stylesheet selects on, which must appear in the partial. Checked this way
+        // round deliberately: the partial may carry classes for a site to hook, but a selector with
+        // nothing to match is dead weight at best and a wrong assumption at worst.
+        foreach (var className in new[] { "itg-signature-field", "signature-pad-body" })
+        {
+            Assert.Contains($".{className}", css, StringComparison.Ordinal);
+            Assert.Contains($"\"{className}\"", partial, StringComparison.Ordinal);
+        }
+
+        // The double-hyphen form was the class name until it was corrected; nothing should resurrect
+        // it, in either file.
+        Assert.DoesNotContain("signature-pad--actions", css, StringComparison.Ordinal);
+        Assert.DoesNotContain("signature-pad--actions", partial, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Turning the option off has to produce no stylesheet at all, not an empty-stringed one: the
+    /// point of the switch is that a site styling the canvas itself gets nothing to override.
+    /// </summary>
+    [Fact]
+    public void RequiredCssFiles_is_empty_when_the_default_stylesheet_is_turned_off()
+    {
+        Assert.Empty(CreateSignature(includeDefaultStylesheet: false).RequiredCssFiles(new Field()));
+    }
+
+    /// <summary>
+    /// Builds the field type the way the container does. There is no parameterless constructor by
+    /// design - see the remarks on <see cref="Fields.Signature(IOptions{SignatureFieldOptions})"/>.
+    /// </summary>
+    private static Signature CreateSignature(bool includeDefaultStylesheet = true) =>
+        new(Options.Create(new SignatureFieldOptions
+        {
+            IncludeDefaultStylesheet = includeDefaultStylesheet,
+        }));
 
     /// <summary>The client build's source directory.</summary>
     private static string ClientRoot() => Path.Combine(ProjectRoot(), "Client");
