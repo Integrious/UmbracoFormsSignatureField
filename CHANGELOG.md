@@ -6,7 +6,7 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-## [2.0.0] - 2026-11-16
+## [2.0.0] - 2026-11-19
 
 First release published to NuGet. Earlier versions, up to the `v/1.0.4` tag, were consumed only as
 a project reference from the one site that used them, so there is no 1.0.x package on nuget.org.
