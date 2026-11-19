@@ -47,10 +47,16 @@ jobs:
           cache: npm
           cache-dependency-path: src/Integrious.Umbraco.Forms.SignatureField/Client/package-lock.json
 
-      # This repository's history uses a `v/1.0.4` tag convention, which still matches the `v*.*.*`
-      # trigger above but yields "/1.0.4" once the leading v is stripped - an invalid version that
-      # NuGet would reject late, after a build. Validate it here instead, and fail with a message
-      # that says what to do. New tags should be `v1.1.0`, matching our other packages.
+      # This repository's history uses a `v/1.0.4` tag convention. Such a tag does *not* match the
+      # `v*.*.*` trigger above, because a single `*` matches no `/` in a GitHub filter pattern - so
+      # it releases nothing at all rather than releasing something broken. Harmless, but silent:
+      # push `v/2.1.0` expecting a release and you get no run, no error, and nothing to notice.
+      # New tags are `v2.1.0`, matching our other packages.
+      #
+      # The check below catches the noisier near miss - a tag that does trigger but leaves
+      # something that is not a version once the leading v is stripped, which NuGet would otherwise
+      # reject late, after a build - and the workflow_dispatch input, which has no trigger pattern
+      # filtering it at all.
       - name: Determine version
         id: version
         run: |
