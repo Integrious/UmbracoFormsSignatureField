@@ -1,18 +1,27 @@
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Swap the comments on the following lines if you wish to use zero-installs
-# In that case, don't forget to run `yarn config set enableGlobalCache false`!
-# Documentation here: https://yarnpkg.com/features/caching#zero-installs
-
-#!.yarn/cache
-.pnp.*
+## .NET
+bin/
 obj/
-App_Plugins/UmbracoFormsSignatureField/
-bin/Debug/
-bin/Release/
+artifacts/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+*.nupkg
+*.snupkg
+TestResults/
+coverage*.xml
+*.binlog
+
+## Node
 node_modules/
+
+## Everything the client build (Client/) writes into the project's wwwroot. Both folders are
+## generated in their entirety; the only tracked file under App_Plugins is umbraco-package.json,
+## which is hand written and sits above them.
+##
+## Because these are generated and ignored, a build that has not run the client build produces a
+## package that installs cleanly and then does nothing. The csproj fails the pack in that case
+## rather than shipping one - see the VerifySignatureFieldAssets target.
+src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/BackOffice/
+src/Integrious.Umbraco.Forms.SignatureField/wwwroot/App_Plugins/UmbracoFormsSignatureField/FrontEnd/

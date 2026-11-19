@@ -1,0 +1,25 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    App_Plugins is no longer copied from here. This is a Razor class library now, so everything
+    under its wwwroot/ ships as static web assets and the consuming site serves them straight from
+    the package - no copying, no generated files in the site's wwwroot, and nothing for Clean to
+    delete. The old copy/clear pair made Rebuild fail outright: wwwroot globs are expanded at
+    evaluation time, before Clean runs, so the build then tried to resolve static web assets whose
+    files Clean had just deleted.
+
+    The Views copy below stays. That is an Umbraco Forms theme partial, which has to exist as a
+    physical file in the consuming site rather than being compiled into an assembly.
+  -->
+  <PropertyGroup>
+    <UmbracoFormsSignatureFieldViewFilesPath>$(MSBuildThisFileDirectory)..\Views\**\*.*</UmbracoFormsSignatureFieldViewFilesPath>
+  </PropertyGroup>
+
+  <Target Name="CopyUmbracoFormsSignatureFieldViewAssets" BeforeTargets="Build">
+    <ItemGroup>
+      <UmbracoFormsSignatureFieldViewFiles Include="$(UmbracoFormsSignatureFieldViewFilesPath)" />
+    </ItemGroup>
+    <Message Text="Copying Umbraco Forms Signature Field view files: $(UmbracoFormsSignatureFieldViewFilesPath) - #@(UmbracoFormsSignatureFieldViewFiles->Count()) files" Importance="high" />
+    <Copy SourceFiles="@(UmbracoFormsSignatureFieldViewFiles)" DestinationFiles="@(UmbracoFormsSignatureFieldViewFiles->'$(MSBuildProjectDirectory)\Views\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true"
+          Condition="%(Filename)!='' AND (!Exists('$(MSBuildProjectDirectory)\Views\%(RecursiveDir)%(Filename)%(Extension)') OR $([System.DateTime]::Parse('%(ModifiedTime)').Ticks) &gt; $([System.IO.File]::GetLastWriteTime('$(MSBuildProjectDirectory)\Views\%(RecursiveDir)%(Filename)%(Extension)').Ticks))"/>
+  </Target>
+</Project>

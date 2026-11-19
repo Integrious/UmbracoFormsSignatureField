@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # The client assets are built explicitly below, so the MSBuild target that rebuilds them on a
+  # local build should stay out of the way rather than running the build twice.
+  SkipClientBuild: 'true'
+  CLIENT_DIR: src/Integrious.Umbraco.Forms.SignatureField/Client
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/Integrious.Umbraco.Forms.SignatureField/Client/package-lock.json
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Install client dependencies
+        run: npm ci
+        working-directory: ${{ env.CLIENT_DIR }}
+
+      # The bundled script, stylesheet and back office output are all gitignored, so without this
+      # the pack below fails its asset guard - which is the point of that guard.
+      - name: Build client assets
+        run: npm run build
+        working-directory: ${{ env.CLIENT_DIR }}
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+      # Packing on every build keeps packaging failures - a missing readme, a buildTransitive file
+      # whose name no longer matches the package id - from being discovered only at release time.
+      - name: Pack
+        run: dotnet pack src/Integrious.Umbraco.Forms.SignatureField --configuration Release --no-build --output artifacts
+
+      - name: Upload package
+        uses: actions/upload-artifact@v7
+        with:
+          name: nupkg
+          path: artifacts/*

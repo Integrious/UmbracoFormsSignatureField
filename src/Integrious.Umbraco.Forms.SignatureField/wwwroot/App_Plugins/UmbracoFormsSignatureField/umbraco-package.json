@@ -1,0 +1,13 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "name": "Integrious Signature Field",
+  "allowPublicAccess": false,
+  "extensions": [
+    {
+      "type": "bundle",
+      "alias": "Integrious.SignatureField.Bundle",
+      "name": "Integrious Signature Field Bundle",
+      "js": "/App_Plugins/UmbracoFormsSignatureField/BackOffice/signature-field.js"
+    }
+  ]
+}

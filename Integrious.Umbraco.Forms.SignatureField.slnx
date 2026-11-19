@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+    <File Path="CHANGELOG.md" />
+    <File Path="global.json" />
+    <File Path="umbraco-marketplace.json" />
+    <File Path="package.json" />
+    <File Path="webpack.config.js" />
+  </Folder>
+  <Project Path="src/Integrious.Umbraco.Forms.SignatureField/Integrious.Umbraco.Forms.SignatureField.csproj" />
+  <Project Path="tests/Integrious.Umbraco.Forms.SignatureField.Tests/Integrious.Umbraco.Forms.SignatureField.Tests.csproj" />
+</Solution>

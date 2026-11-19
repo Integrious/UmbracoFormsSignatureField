@@ -1,0 +1,21 @@
+/*
+ * The default front end stylesheet, included by Signature.RequiredCssFiles unless a site sets
+ * Integrious:SignatureField:IncludeDefaultStylesheet to false.
+ *
+ * Deliberately one rule. Sizing the canvas is not cosmetic: signature-field.ts measures
+ * offsetWidth/offsetHeight to scale the drawing surface for the device pixel ratio, so an unsized
+ * canvas captures at the browser default of 300x150 and the signature comes out coarse. Everything
+ * else - the footer, the Clear button, the surrounding layout - is the site's business, and a
+ * package that styled it would be fighting the site's own theme rather than helping it.
+ *
+ * The selector matches the markup in
+ * Views/partials/forms/themes/default/fieldtypes/FieldType.Signature.cshtml. Note that
+ * .signature-pad-footer is a *sibling* of .signature-pad-body there, not a child.
+ */
+.itg-signature-field .signature-pad-body canvas {
+    border: 1px solid grey;
+    width: 100%;
+    height: 300px;
+    background: #fff;
+    margin-bottom: 5px;
+}

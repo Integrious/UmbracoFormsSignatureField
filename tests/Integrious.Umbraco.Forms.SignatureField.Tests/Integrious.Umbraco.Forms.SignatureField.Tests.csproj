@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Integrious.Umbraco.Forms.SignatureField.Tests</RootNamespace>
+    <AssemblyName>Integrious.Umbraco.Forms.SignatureField.Tests</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <!-- Referencing the project would otherwise run the client build on every test build. The
+         property was still called SkipFrontEndBuild after the move from yarn to Vite renamed it, so
+         it had silently stopped suppressing anything. -->
+    <SkipClientBuild>true</SkipClientBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Integrious.Umbraco.Forms.SignatureField/Integrious.Umbraco.Forms.SignatureField.csproj" />
+  </ItemGroup>
+
+</Project>
