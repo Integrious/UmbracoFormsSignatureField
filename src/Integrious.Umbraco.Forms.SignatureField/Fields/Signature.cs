@@ -18,10 +18,9 @@ public class Signature : FieldType
 
     // GetDesignView is deliberately not overridden. It returned an Umbraco Forms 13 AngularJS view
     // path, and both that view and the stylesheet that went with it have been deleted: Forms 17 has
-    // no AngularJS and nothing loads either. The base implementation points at an equally dead path
-    // inside Forms' own App_Plugins folder, so neither is correct - the v17 equivalent is a
-    // PreviewView naming a `formsFieldPreview` extension, which is tracked in the CHANGELOG under
-    // known issues. Overriding it with our own dead path only made the gap harder to see.
+    // no AngularJS and nothing loads either. The v17 equivalent is PreviewView below, and the
+    // designer reads only that - it never looks at the design view, so the base implementation's
+    // equally dead path inside Forms' own App_Plugins folder does no harm.
 
     /// <summary>
     /// The name the back office uses to decide how to display a submitted signature.
@@ -38,6 +37,21 @@ public class Signature : FieldType
     /// directly.
     /// </remarks>
     public override string RenderView => "signature";
+
+    /// <summary>
+    /// The component the Umbraco Forms designer shows where this field sits on the form.
+    /// </summary>
+    /// <remarks>
+    /// Names a <c>formsFieldPreview</c> extension registered by this package's back office bundle.
+    /// The designer looks the alias up in the extension registry and, finding nothing, renders
+    /// nothing at all - no error and no placeholder - so a mismatch between this string and the
+    /// manifest looks exactly like a field type that has no preview. A test pins them together.
+    ///
+    /// Defaults to an empty string on the base class, which is why this field had no preview before:
+    /// the Forms 13 design view it used to name was AngularJS, and v17 does not look at design
+    /// views at all.
+    /// </remarks>
+    public override string PreviewView => SignaturePreviewView;
 
     /// <inheritdoc />
     public override IEnumerable<string> RequiredJavascriptFiles(Field field) => new[]
@@ -109,6 +123,15 @@ public class Signature : FieldType
     /// to extend it.
     /// </remarks>
     public const string SignatureEditView = "Integrious.PropertyEditorUi.Signature";
+
+    /// <summary>
+    /// The <c>formsFieldPreview</c> extension the form designer renders for this field.
+    /// </summary>
+    /// <remarks>
+    /// Must match the alias registered in Client/src/backoffice/index.ts. See
+    /// <see cref="PreviewView"/> for why a mismatch is invisible rather than loud.
+    /// </remarks>
+    public const string SignaturePreviewView = "Integrious.FormsFieldPreview.Signature";
 
     /// <summary>
     /// The default front end stylesheet, shipped as a static web asset.

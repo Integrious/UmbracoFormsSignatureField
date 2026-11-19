@@ -169,6 +169,45 @@ public class SignatureTests
     }
 
     /// <summary>
+    /// The field type's PreviewView has to name a formsFieldPreview that the client bundle actually
+    /// registers, or the form designer shows nothing where the field sits.
+    /// </summary>
+    /// <remarks>
+    /// The same unchecked string joint as EditView above, but with a worse failure mode: Umbraco
+    /// Forms looks the alias up with umbExtensionsRegistry.getByAlias and, on a miss, renders an
+    /// empty template. There is no fallback and no console error, so a typo here is
+    /// indistinguishable from a field type that never had a preview - which is exactly how this one
+    /// looked until it got one.
+    /// </remarks>
+    [Fact]
+    public void PreviewView_names_the_field_preview_the_client_bundle_registers()
+    {
+        Assert.Equal(Fields.Signature.SignaturePreviewView, CreateSignature().PreviewView);
+
+        var manifestSource = File.ReadAllText(
+            Path.Combine(ClientRoot(), "src", "backoffice", "index.ts"));
+
+        Assert.Contains($"'{Fields.Signature.SignaturePreviewView}'", manifestSource, StringComparison.Ordinal);
+        Assert.Contains("type: 'formsFieldPreview'", manifestSource, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// A preview alias has to be an extension alias, not a view path. Umbraco Forms 13 named
+    /// AngularJS files here, and this field type carried such a path until the v17 port; it would
+    /// still satisfy a test that only checked the value was non-empty.
+    /// </summary>
+    [Fact]
+    public void PreviewView_is_not_a_view_path()
+    {
+        var previewView = CreateSignature().PreviewView;
+
+        Assert.NotEmpty(previewView);
+        Assert.DoesNotContain("/", previewView);
+        Assert.DoesNotContain("~", previewView);
+        Assert.DoesNotContain(".html", previewView);
+    }
+
+    /// <summary>
     /// The default stylesheet is included by default, and names a file the build actually produces.
     /// </summary>
     /// <remarks>

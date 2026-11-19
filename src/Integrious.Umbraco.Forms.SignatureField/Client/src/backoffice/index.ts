@@ -5,8 +5,8 @@
  * imports it and registers whatever this array holds, so new extensions get added here rather than
  * to the json manifest.
  *
- * The alias below is the one Signature.SignatureEditView names on the server. Nothing but that
- * string joins the two, so a test pins them together.
+ * The aliases below are the ones Signature.SignatureEditView and Signature.SignaturePreviewView
+ * name on the server. Nothing but those strings joins the two sides, so tests pin them together.
  */
 export const manifests: Array<UmbExtensionManifest> = [
     {
@@ -20,5 +20,11 @@ export const manifests: Array<UmbExtensionManifest> = [
             group: 'Forms',
             supportsReadOnly: true,
         },
+    },
+    {
+        type: 'formsFieldPreview',
+        alias: 'Integrious.FormsFieldPreview.Signature',
+        name: 'Signature Field Preview',
+        element: () => import('./signature-field-preview.element.js'),
     },
 ];

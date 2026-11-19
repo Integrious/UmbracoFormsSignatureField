@@ -94,6 +94,12 @@ The markup the theme partial produces, if you are styling it yourself:
 
 Note that `signature-pad-footer` is a **sibling** of `signature-pad-body`, not a child.
 
+## In the form designer
+
+The field renders a preview showing a signature pad, so a form author can see what the field is
+rather than an empty box. It is a likeness rather than a live canvas, and deliberately smaller than
+the real thing — a 300px tall pad would dwarf every other field in the designer.
+
 ## Displaying a submitted signature
 
 The stored value is a complete data URL, so it can be used directly as an image source:
@@ -136,9 +142,10 @@ dotnet test
 
 There are two separate bundles, because they have opposite needs:
 
-- **`src/backoffice`** → the property editor UI the Forms entry view uses. Everything under
-  `@umbraco-cms` is left **external**, because those specifiers are in the back office's own
-  importmap and the browser resolves them; bundling them would ship a second copy of Umbraco.
+- **`src/backoffice`** → the property editor UI the Forms entry view uses, and the field preview
+  the form designer shows. Everything under `@umbraco-cms` is left **external**, because those
+  specifiers are in the back office's own importmap and the browser resolves them; bundling them
+  would ship a second copy of Umbraco.
 - **`src/frontend`** → the script the public form loads, plus the default stylesheet, which the
   entry imports so Vite extracts it alongside. Nothing is external here, because a visitor's
   browser has no importmap and `signature_pad` has to be bundled in.

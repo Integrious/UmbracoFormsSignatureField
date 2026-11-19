@@ -46,6 +46,10 @@ directly has to change:
   drawing surface from the canvas' measured size, so an unsized canvas captures at the browser
   default of 300x150. See *Styling* in the README for why the switch is site-wide rather than
   per-form, unlike Umbraco Forms' own `DisableDefaultStylesheet`.
+- **A field preview, so the form designer shows a signature pad where the field sits.** Previously
+  it showed nothing at all: the field named an Umbraco Forms 13 AngularJS design view, and v17 does
+  not read design views - it reads `PreviewView`, which was unset, and renders an empty template
+  when the alias matches no registered extension.
 - A test project covering the field type's external contract: the field type id and view name
   (both persisted in consumers' form definitions), the data type, and that the script path the
   field declares matches where the build actually writes it.
@@ -94,11 +98,5 @@ directly has to change:
   *Added* above.
 - `GetDesignView()` is no longer overridden. It named one of those deleted views, and the base
   implementation names an equally dead path inside Forms' own App_Plugins folder - neither is right
-  in v17. The equivalent is a `PreviewView` naming a `formsFieldPreview` extension, which remains a
-  known issue below.
-
-### Known issues
-
-- `GetDesignView()` still returns an Umbraco Forms 13 AngularJS path, so the field has no design
-  view in the v17 form designer. Unchanged by this release; it needs the v17 equivalent, which is
-  a separate piece of work.
+  in v17, and neither matters, because the designer does not read design views. Its replacement is
+  the `PreviewView` and `formsFieldPreview` pair described under *Added*.
